@@ -1,0 +1,145 @@
+_schema-version: 3.3.0
+ID: purchase-request-management
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+modules:
+  - name: purchase-request-management-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: purchase-request-management-db
+      - name: purchase-request-management-auth
+      - name: purchase-request-management-destination
+
+  - name: purchase-request-management-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: purchase-request-management-db
+
+  - name: purchase-request-management-app-deployer
+    type: com.sap.application.content
+    path: gen
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: purchaserequestmanagementpurchase_request
+          artifacts:
+            - purchase_request.zip
+          target-path: app/
+    requires:
+      - name: purchase-request-management-auth
+      - name: srv-api
+      - name: purchase-request-management-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+    parameters:
+      config:
+        destinations:
+          - Name: srv-api
+            URL: ~{srv-api/srv-url}
+            Authentication: NoAuthentication
+            Type: HTTP
+            ProxyType: Internet
+            HTML5.ForwardAuthToken: true
+            HTML5.DynamicDestination: true
+
+  - name: purchaserequestmanagementpurchase_request
+    type: html5
+    path: app/purchase_request
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+
+  - name: purchase-request-management-destinations
+    type: com.sap.application.content
+    requires:
+      - name: purchase-request-management-auth
+        parameters:
+          service-key:
+            name: purchase-request-management-auth-key
+      - name: purchase-request-management-html5-repo-host
+        parameters:
+          service-key:
+            name: purchase-request-management-html5-repo-host-key
+      - name: srv-api
+      - name: purchase-request-management-destination
+        parameters:
+          content-target: true
+    build-parameters:
+      no-source: true
+    parameters:
+      content:
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: purchase-request-management-html5-repository
+              ServiceInstanceName: purchase-request-management-html5-repo-host
+              ServiceKeyName: purchase-request-management-html5-repo-host-key
+              sap.cloud.service: purchaserequestmanagement.service
+            - Name: purchase-request-management-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: purchase-request-management-auth
+              ServiceKeyName: purchase-request-management-auth-key
+              sap.cloud.service: purchaserequestmanagement.service
+
+resources:
+  - name: purchase-request-management-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: purchase-request-management-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: purchase-request-management-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+
+  - name: purchase-request-management-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: purchase-request-management-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+    requires:
+      - name: srv-api

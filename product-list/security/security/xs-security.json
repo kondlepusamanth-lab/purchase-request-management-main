@@ -1,0 +1,22 @@
+{
+  "xsappname": "product-list",
+  "tenant-mode": "shared",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.read",
+      "description": "With this scope, USER can read products."
+    },
+    {
+      "name": "$XSAPPNAME.Callback",
+      "description": "With this scope set, the callbacks for tenant onboarding can be called.",
+      "grant-as-authority-to-apps": [
+        "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://*approuter-product-list-ap25.cfapps.eu10.hana.ondemand.com/**"
+    ]
+  }
+}

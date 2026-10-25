@@ -1,0 +1,19 @@
+{
+  "name": "security",
+  "version": "1.0.0",
+  "dependencies": {
+    "@sap/cds": "^9",
+    "express": "^4.17.1",
+    "@sap/xsenv": "^3.1.0",
+    "@sap/xssec": "^3.0.10",
+    "passport": "^0.4.1",
+    "body-parser": "^1.19.0"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2.4"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true
+}

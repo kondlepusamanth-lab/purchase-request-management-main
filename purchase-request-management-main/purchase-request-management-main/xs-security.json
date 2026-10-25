@@ -1,0 +1,63 @@
+{
+  "xsappname": "purchase-request-management",
+  "tenant-mode": "dedicated",
+
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Employee",
+      "description": "Employee"
+    },
+    {
+      "name": "$XSAPPNAME.Manager",
+      "description": "Manager"
+    },
+    {
+      "name": "$XSAPPNAME.SeniorManager",
+      "description": "Senior Manager"
+    },
+    {
+      "name": "$XSAPPNAME.Director",
+      "description": "Director"
+    },
+    {
+      "name": "$XSAPPNAME.PRRead",
+      "description": "Read Purchase Requests from other applications"
+    }
+  ],
+
+  "role-templates": [
+    {
+      "name": "Employee",
+      "scope-references": [
+        "$XSAPPNAME.Employee"
+      ]
+    },
+    {
+      "name": "Manager",
+      "scope-references": [
+        "$XSAPPNAME.Manager"
+      ]
+    },
+    {
+      "name": "SeniorManager",
+      "scope-references": [
+        "$XSAPPNAME.SeniorManager"
+      ]
+    },
+    {
+      "name": "Director",
+      "scope-references": [
+        "$XSAPPNAME.Director"
+      ]
+    },
+    {
+      "name": "PRReader",
+      "description": "Allows applications to read Purchase Requests",
+      "scope-references": [
+        "$XSAPPNAME.PRRead"
+      ]
+    }
+  ],
+
+  "attributes": []
+}

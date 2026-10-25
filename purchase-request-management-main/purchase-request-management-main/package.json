@@ -1,0 +1,66 @@
+{
+  "name": "purchase-request-management",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2.4",
+    "@sap/cds-dk": "^9",
+    "cds-plugin-ui5": "^0.17.0"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-purchase_request": "cds watch --open purchaserequest/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "Manager": {
+            "password": "Manager",
+            "roles": [
+              "Manager"
+            ]
+          },
+          "Employee": {
+            "password": "Employee",
+            "roles": [
+              "Employee"
+            ]
+          },
+          "SeniorManager": {
+            "password": "SeniorManager",
+            "roles": [
+              "SeniorManager"
+            ]
+          },
+          "Director": {
+            "password": "Director",
+            "roles": [
+              "Director"
+            ]
+          }
+        }
+      },
+      "[production]": {
+        "auth": {
+          "kind": "xsuaa"
+        }
+      },
+      "html5-repo": true,
+      "destinations": true,
+      "workzone": true
+    }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/purchase_request"
+  ]
+}

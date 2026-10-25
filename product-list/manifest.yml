@@ -1,0 +1,29 @@
+---
+applications:
+  # Approuter Module
+  - name: approuter-product-list
+    routes:
+      - route: approuter-product-list-ap25.cfapps.eu10.hana.ondemand.com
+    path: app
+    memory: 128M
+    env:
+      destinations: >
+        [
+          {"name": "hw-dest",
+           "url": "https://product-list-ap25.cfapps.eu10.hana.ondemand.com",
+           "forwardAuthToken": true}
+        ]
+      TENANT_HOST_PATTERN: "^(.*)-approuter-product-list-ap25.cfapps.eu10.hana.ondemand.com"
+    services:
+      - xsuaa-service-tutorial
+      - saas-registry-tutorial
+
+  # Application Backend Module
+  - name: product-list
+    instances: 1
+    memory: 128M
+    routes:
+      - route: product-list-ap25.cfapps.eu10.hana.ondemand.com
+    services:
+      - xsuaa-service-tutorial
+      - saas-registry-tutorial

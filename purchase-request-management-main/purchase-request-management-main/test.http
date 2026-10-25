@@ -1,0 +1,22 @@
+###
+
+GET http://localhost:4004/odata/v4/purchase/PurchaseRequests
+
+
+###
+
+POST http://localhost:4004/odata/v4/purchase/PurchaseRequests
+Content-Type: application/json
+
+ {
+      "requestNumber": "PR-2026-000055",
+      "requesterName": "Venkatesh",
+      "department_code": "IT",
+      "requestDate": "2026-06-25",
+      "currency_code": "INR",
+      "totalAmount": 2360,
+      "status": "Draft",
+      "approver": null,
+      "approvalComments": null,
+      "rejectionComments": null
+    }
